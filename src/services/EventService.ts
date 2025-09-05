@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'https://my-json-server.typicode.com/Varintor/662115045',
+  baseURL: 'http://localhost:8080', // 👈 เปลี่ยนเป็น backend ของ Spring Boot
   withCredentials: false,
   headers: {
     Accept: 'application/json',
@@ -13,7 +13,7 @@ export default {
   getEvents(perPage: number, page: number) {
     return apiClient.get('/events?_limit=' + perPage + '&_page=' + page)
   },
-  getEvent(id: number){
+  getEvent(id: number) {
     return apiClient.get('/events/' + id)
-  }
+  },
 }

@@ -9,7 +9,8 @@ const totalEvents = ref(0)
 const page = computed(() => props.page)
 const size = computed(() => props.size)
 const hasNextPage = computed(() => {
-  const totalPages = Math.ceil(totalEvents.value / 3)
+  EventService.getEvents(size.value, page.value)
+  const totalPages = Math.ceil(totalEvents.value / size.value)
   return page.value < totalPages
 })
 const props = defineProps({
@@ -27,13 +28,13 @@ const props = defineProps({
 onMounted(() => {
   watchEffect(() => {
     EventService.getEvents(3, page.value)
-    .then((response) => {
-      events.value = response.data
-      totalEvents.value = response.headers['x-total-count']
-    })
-    .catch((error) => {
-      console.error('There was an error!', error);
-    })
+      .then((response) => {
+        events.value = response.data
+        totalEvents.value = response.headers['x-total-count']
+      })
+      .catch((error) => {
+        console.error('There was an error!', error);
+      })
   })
 })
 
@@ -47,9 +48,13 @@ onMounted(() => {
     <EventCard v-for="event in events" :key="event.id" :event="event" />
 
     <div class="flex w-[290px]">
-  <RouterLink id="page-prev" class="flex-1 text-left text-[#2c3e50] no-underline" :to="{name: 'event-list-view', query: {page: page - 1, size: size }}" v-if="page > 1">&#60; Prev Page</RouterLink> 
+      <RouterLink id="page-prev" class="flex-1 text-left text-[#2c3e50] no-underline"
+        :to="{ name: 'event-list-view', query: { page: page - 1, size: size } }" v-if="page > 1">&#60; Prev Page
+      </RouterLink>
 
-  <RouterLink id="page-next" class="flex-1 text-left text-[#2c3e50] no-underline" :to="{name: 'event-list-view', query: {page: page + 1, size: size }}" v-if="hasNextPage">Next Page &#62;</RouterLink>
+      <RouterLink id="page-next" class="flex-1 text-left text-[#2c3e50] no-underline"
+        :to="{ name: 'event-list-view', query: { page: page + 1, size: size } }" v-if="hasNextPage">Next Page &#62;
+      </RouterLink>
     </div>
   </div>
 </template>
